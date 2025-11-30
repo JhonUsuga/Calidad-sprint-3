@@ -1,14 +1,13 @@
-package co.edu.udea.certificacion.sauceDemo.stepdefinitions;
+package co.edu.udea.certificacion.couriersync.stepdefinitions;
 
-import co.edu.udea.certificacion.sauceDemo.interactions.LoginWithEmptyPassword;
-import co.edu.udea.certificacion.sauceDemo.interactions.LoginWithEmptyUser;
-import co.edu.udea.certificacion.sauceDemo.interactions.LoginWithInvalidPassword;
-import co.edu.udea.certificacion.sauceDemo.interactions.Logoutsaucedemo;
-import co.edu.udea.certificacion.sauceDemo.questions.EmptyFields;
-import co.edu.udea.certificacion.sauceDemo.questions.InvalidLoginMessage;
-import co.edu.udea.certificacion.sauceDemo.questions.Validation;
-import co.edu.udea.certificacion.sauceDemo.tasks.Loginsaucedemo;
-import co.edu.udea.certificacion.sauceDemo.userinterfaces.LoginInterface;
+import co.edu.udea.certificacion.couriersync.interactions.LoginWithEmptyPassword;
+import co.edu.udea.certificacion.couriersync.interactions.LoginWithEmptyUser;
+import co.edu.udea.certificacion.couriersync.interactions.Logoutcouriersync;
+import co.edu.udea.certificacion.couriersync.questions.EmptyEmailMessage;
+import co.edu.udea.certificacion.couriersync.questions.EmptyPasswordMessage;
+import co.edu.udea.certificacion.couriersync.questions.Validation;
+import co.edu.udea.certificacion.couriersync.tasks.Logincouriersync;
+import co.edu.udea.certificacion.couriersync.userinterfaces.LoginInterface;
 
 import org.hamcrest.Matchers;
 import org.openqa.selenium.WebDriver;
@@ -26,14 +25,11 @@ import net.serenitybdd.screenplay.actors.OnStage;
 import net.serenitybdd.screenplay.actors.OnlineCast;
 import net.serenitybdd.screenplay.waits.WaitUntil;
 
-import static co.edu.udea.certificacion.sauceDemo.userinterfaces.LoginInterface.PAGE_TITLE;
+import static co.edu.udea.certificacion.couriersync.userinterfaces.LoginInterface.PAGE_TITLE;
 import static net.serenitybdd.screenplay.GivenWhenThen.seeThat;
 import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.containsText;
-import static co.edu.udea.certificacion.sauceDemo.userinterfaces.LoginInterface.USERNAME_VALUE;
 
-import static org.hamcrest.Matchers.equalTo;
-
-public class Login_saucedemoStepDefinition {
+public class Login_couriersyncStepDefinition {
 
     @Managed
     public WebDriver driver;
@@ -49,7 +45,6 @@ public class Login_saucedemoStepDefinition {
         usuario.can(BrowseTheWeb.with(driver));
     }
 
-
     @Given("estoy en la vista de login de la tienda online")
     public void estoyEnLaVistaDeLoginDeLaTiendaOnline() {
         usuario.wasAbleTo(Open.browserOn(loginInterface));
@@ -57,64 +52,51 @@ public class Login_saucedemoStepDefinition {
 
     @When("pongo mi usuario y contraseña correctos")
     public void pongoMiUsuarioYContraseñaCorrectos() {
-        usuario.attemptsTo(Loginsaucedemo.login());
+        usuario.attemptsTo(Logincouriersync.login());
     }
-    @When("pongo un usuario o una contraseña invalida")
-    public void pongoUnUsuarioOUnaContrasenaInvalida() {
-        usuario.attemptsTo(LoginWithInvalidPassword.tryLogin());
-    }
+
     @When("dejo el campo de usuario vacío y pongo una contraseña correcta")
     public void dejoElCampoDeUsuarioVacioYPongoUnaContrasenaCorrecta() {
-        usuario.attemptsTo(LoginWithEmptyUser.tryLogin());
+        usuario.attemptsTo(LoginWithEmptyUser.failLogin());
     }
+
     @When("pongo mi usuario correcto y dejo el campo de contraseña vacío")
     public void pongoMiUsuarioCorrectoYDejoElCampoDeContrasenaVacio() {
-        usuario.attemptsTo(LoginWithEmptyPassword.tryLogin());
+        usuario.attemptsTo(LoginWithEmptyPassword.failLogin());
     }
 
     @Then("me logueo correctamente")
     public void meLogueoCorrectamente() {
 
         usuario.attemptsTo(
-                WaitUntil.the(PAGE_TITLE, containsText("Products"))
+                WaitUntil.the(PAGE_TITLE, containsText("CourierSync"))
                         .forNoMoreThan(5).seconds()
         );
 
         usuario.should(
-                seeThat(Validation.isLoggedIn(), Matchers.containsString("Products"))
+                seeThat(Validation.isLoggedIn(), Matchers.containsString("CourierSync"))
         );
 
-        usuario.attemptsTo(Logoutsaucedemo.logout());
+        usuario.attemptsTo(Logoutcouriersync.logout());
     }
-    @Then("veo un mensaje de error indicando usuario o contraseña inválidos")
-    public void veoMensajeDeCredencialesInvalidas() {
 
-        usuario.should(
-                seeThat(
-                        InvalidLoginMessage.value(),
-                        Matchers.containsString("Username and password do not match any user in this service")
-                )
-        );
-    }
     @Then("veo un mensaje visual de error indicando que el usuario es obligatorio")
     public void veoUnMensajeVisualDeErrorIndicandoQueElUsuarioEsObligatorio() {
         usuario.should(
                 seeThat(
-                        EmptyFields.value(),
-                        Matchers.containsString("Username is required")
+                        EmptyEmailMessage.value(),
+                        Matchers.containsString("obligatorio")
                 )
         );
     }
+
     @Then("veo un mensaje visual de error indicando que la contraseña es obligatoria")
     public void veoUnMensajeVisualDeErrorIndicandoQueLaContrasenaEsObligatoria() {
         usuario.should(
                 seeThat(
-                        EmptyFields.value(),
-                        Matchers.containsString("Password is required")
+                        EmptyPasswordMessage.value(),
+                        Matchers.containsString("obligatorio")
                 )
         );
     }
-
-
-
 }

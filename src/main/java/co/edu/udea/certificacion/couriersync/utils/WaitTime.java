@@ -1,4 +1,4 @@
-package co.edu.udea.certificacion.sauceDemo.utils;
+package co.edu.udea.certificacion.couriersync.utils;
 
 public class WaitTime {
 

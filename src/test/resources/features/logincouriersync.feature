@@ -1,4 +1,4 @@
-#Author: Esteban Correa-Juan Lopez
+#Author: Esteban Correa - Juan Lopez
     #Language: en
 
 Feature: Loguearme en la tienda online con mi usuario
@@ -8,11 +8,6 @@ Feature: Loguearme en la tienda online con mi usuario
     Given estoy en la vista de login de la tienda online
     When pongo mi usuario y contraseña correctos
     Then me logueo correctamente
-
-  Scenario: Usuario o contraseña invalidos
-    Given estoy en la vista de login de la tienda online
-    When pongo un usuario o una contraseña invalida
-    Then veo un mensaje de error indicando usuario o contraseña inválidos
 
   Scenario: Usuario vacío
     Given estoy en la vista de login de la tienda online

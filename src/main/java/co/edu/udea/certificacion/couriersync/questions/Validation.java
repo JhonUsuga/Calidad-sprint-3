@@ -1,10 +1,10 @@
-package co.edu.udea.certificacion.sauceDemo.questions;
+package co.edu.udea.certificacion.couriersync.questions;
 
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Question;
 import net.serenitybdd.screenplay.abilities.BrowseTheWeb;
 
-import static co.edu.udea.certificacion.sauceDemo.userinterfaces.LoginInterface.PAGE_TITLE;
+import static co.edu.udea.certificacion.couriersync.userinterfaces.LoginInterface.PAGE_TITLE;
 
 public class Validation implements Question<String> {
 
