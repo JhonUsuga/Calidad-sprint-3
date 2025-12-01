@@ -29,6 +29,4 @@ public class LoginInterface extends PageObject {
 
     public static final Target GO_TO_LOGIN_BUTTON = Target.the("Go to login button")
             .locatedBy("//*[@id=\"main-content\"]/div/div/div[2]/div/a[1]");
-
-
 }

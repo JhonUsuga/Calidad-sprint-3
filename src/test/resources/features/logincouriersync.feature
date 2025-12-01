@@ -1,4 +1,4 @@
-#Author: Esteban Correa - Juan Lopez
+#Author: Esteban Correa - Jhon Usuga
     #Language: en
 
 Feature: Loguearme en la tienda online con mi usuario
@@ -18,3 +18,14 @@ Feature: Loguearme en la tienda online con mi usuario
     Given estoy en la vista de login de la tienda online
     When pongo mi usuario correcto y dejo el campo de contraseña vacío
     Then veo un mensaje visual de error indicando que la contraseña es obligatoria
+
+  Scenario Outline: Login según tipo de usuario
+    Given estoy en la vista de login de la tienda online
+    When ingreso como usuario "<rol>"
+    Then veo el panel correspondiente al "<rol>"
+
+    Examples:
+      | rol            |
+      | administrador  |
+      | cliente        |
+      | agente         |
