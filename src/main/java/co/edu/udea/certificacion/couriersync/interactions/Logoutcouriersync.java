@@ -9,8 +9,9 @@ import net.serenitybdd.screenplay.targets.Target;
 
 public class Logoutcouriersync implements Interaction {
 
+    // Botón "Cerrar sesión" del navbar
     public static final Target LOGOUT_BUTTON = Target.the("Logout button")
-            .locatedBy("//*[@id='main-content']/header/div/div[2]/button[2]");
+            .locatedBy("//header//button[normalize-space()='Cerrar sesión']");
 
     @Override
     public <T extends Actor> void performAs(T actor) {

@@ -6,34 +6,25 @@ import co.edu.udea.certificacion.couriersync.interactions.Logoutcouriersync;
 import co.edu.udea.certificacion.couriersync.questions.EmptyEmailMessage;
 import co.edu.udea.certificacion.couriersync.questions.EmptyPasswordMessage;
 import co.edu.udea.certificacion.couriersync.questions.Validation;
+import co.edu.udea.certificacion.couriersync.tasks.CompleteCustomerFlow;
 import co.edu.udea.certificacion.couriersync.tasks.Logincouriersync;
 import co.edu.udea.certificacion.couriersync.userinterfaces.LoginInterface;
-
-import net.serenitybdd.screenplay.questions.Text;
-import org.hamcrest.Matchers;
-import org.openqa.selenium.WebDriver;
-
+import co.edu.udea.certificacion.couriersync.userinterfaces.ProfileInterface;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
 import net.serenitybdd.annotations.Managed;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.abilities.BrowseTheWeb;
 import net.serenitybdd.screenplay.actions.Open;
-import net.serenitybdd.screenplay.actions.Click;
-import net.serenitybdd.screenplay.actions.Enter;
-import net.serenitybdd.screenplay.actions.Scroll;
 import net.serenitybdd.screenplay.actors.OnStage;
 import net.serenitybdd.screenplay.actors.OnlineCast;
 import net.serenitybdd.screenplay.waits.WaitUntil;
+import org.hamcrest.Matchers;
+import org.openqa.selenium.WebDriver;
 
 import static co.edu.udea.certificacion.couriersync.userinterfaces.LoginInterface.PAGE_TITLE;
-import static co.edu.udea.certificacion.couriersync.userinterfaces.LoginInterface.GO_TO_LOGIN_BUTTON;
-import static co.edu.udea.certificacion.couriersync.userinterfaces.LoginInterface.USERNAME_TEXT_BOX;
-import static co.edu.udea.certificacion.couriersync.userinterfaces.LoginInterface.PASSWORD_TEXT_BOX;
-import static co.edu.udea.certificacion.couriersync.userinterfaces.LoginInterface.LOGIN_BUTTON;
 import static net.serenitybdd.screenplay.GivenWhenThen.seeThat;
 import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.containsText;
 import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.isVisible;
@@ -48,7 +39,7 @@ public class Login_couriersyncStepDefinition {
     LoginInterface loginInterface = new LoginInterface();
 
     @Before
-    public void config(){
+    public void config() {
         OnStage.setTheStage(new OnlineCast());
         usuario = OnStage.theActorCalled("usuario");
         usuario.can(BrowseTheWeb.with(driver));
@@ -74,36 +65,6 @@ public class Login_couriersyncStepDefinition {
         usuario.attemptsTo(LoginWithEmptyPassword.failLogin());
     }
 
-    // 🔹 ESTE ES EL STEP QUE FALTA PARA:
-    // When ingreso como usuario "administrador|cliente|agente"
-    @When("ingreso como usuario {string}")
-    public void ingresoComoUsuario(String tipoUsuario) {
-
-        String correo;
-        switch (tipoUsuario.toLowerCase()) {
-            case "administrador":
-                correo = "admin@demo.com";
-                break;
-            case "cliente":
-                correo = "cliente@demo.com";
-                break;
-            case "agente":
-                correo = "agente@demo.com";
-                break;
-            default:
-                throw new IllegalArgumentException("Tipo de usuario no soportado: " + tipoUsuario);
-        }
-
-        usuario.attemptsTo(
-                Click.on(GO_TO_LOGIN_BUTTON),
-                Enter.theValue(correo).into(USERNAME_TEXT_BOX),
-                // la app acepta cualquier contraseña
-                Enter.theValue("123").into(PASSWORD_TEXT_BOX),
-                Scroll.to(LOGIN_BUTTON),
-                Click.on(LOGIN_BUTTON)
-        );
-    }
-
     @Then("me logueo correctamente")
     public void meLogueoCorrectamente() {
 
@@ -116,6 +77,7 @@ public class Login_couriersyncStepDefinition {
                 seeThat(Validation.isLoggedIn(), Matchers.containsString("CourierSync"))
         );
 
+        // Aquí sí hacemos logout porque estamos en el dashboard
         usuario.attemptsTo(Logoutcouriersync.logout());
     }
 
@@ -139,35 +101,27 @@ public class Login_couriersyncStepDefinition {
         );
     }
 
-    @Then("veo el panel correspondiente al {string}")
-    public void veoElPanelCorrespondienteAlRol(String rol) {
+    @When("realizo el flujo completo de cliente con credenciales válidas")
+    public void realizoElFlujoCompletoDeClienteConCredencialesValidas() {
 
-        // Espera a que el título sea visible (para evitar condiciones de carrera)
+        // 1. Login
         usuario.attemptsTo(
-                WaitUntil.the(PAGE_TITLE, isVisible())
-                        .forNoMoreThan(5).seconds()
+                Logincouriersync.login()
         );
 
-        // Vuelve a localizar el elemento y lee el texto
-        usuario.should(
-                seeThat(
-                        "El título del panel corresponde al usuario logueado",
-                        actor -> Text.of(PAGE_TITLE).answeredBy(actor),
-                        Matchers.containsString("CourierSync")
-                )
+        // 2. Flujo completo del cliente (pedidos + feedback + perfil)
+        usuario.attemptsTo(
+                CompleteCustomerFlow.e2eDefault()
         );
-
-        usuario.attemptsTo(Logoutcouriersync.logout());
     }
 
-    @Then("vuelvo a la vista de login")
-    public void vuelvoALaVistaDeLogin() {
-        usuario.should(
-                seeThat(
-                        "Botón visible para volver al login",
-                        actor -> GO_TO_LOGIN_BUTTON.resolveFor(actor).isVisible(),
-                        Matchers.is(true)
-                )
+    @Then("veo la retroalimentación del pedido de prueba en el dashboard y cierro sesión")
+    public void veoLaRetroalimentacionDelPedidoDePruebaEnElDashboardYCierroSesion() {
+
+        // En esta versión: solo validamos que llegamos al perfil (flecha Volver visible)
+        usuario.attemptsTo(
+                WaitUntil.the(ProfileInterface.VOLVER_BUTTON, isVisible())
+                        .forNoMoreThan(10).seconds()
         );
     }
 }

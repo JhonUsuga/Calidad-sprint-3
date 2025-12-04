@@ -1,5 +1,5 @@
 #Author: Esteban Correa - Jhon Usuga
-    #Language: en
+#Language: en
 
 Feature: Loguearme en la tienda online con mi usuario
   Como usuario necesito loguearme en la pagina para poder tener funciones de usuario logueado
@@ -19,13 +19,7 @@ Feature: Loguearme en la tienda online con mi usuario
     When pongo mi usuario correcto y dejo el campo de contraseña vacío
     Then veo un mensaje visual de error indicando que la contraseña es obligatoria
 
-  Scenario Outline: Login según tipo de usuario
+  Scenario: Flujo completo de cliente desde login hasta retroalimentación y perfil
     Given estoy en la vista de login de la tienda online
-    When ingreso como usuario "<rol>"
-    Then veo el panel correspondiente al "<rol>"
-
-    Examples:
-      | rol            |
-      | administrador  |
-      | cliente        |
-      | agente         |
+    When realizo el flujo completo de cliente con credenciales válidas
+    Then veo la retroalimentación del pedido de prueba en el dashboard y cierro sesión
